@@ -1,18 +1,14 @@
 from src.data_pipeline import run_data_pipeline
-from src.feature_engineering import create_features
 from src.train_model import train_model
-from src.evaluate import plot_roc, plot_recession_probability
 
 
 def main():
 
-    df = run_data_pipeline()
-    df = create_features(df)
+    for country in ["usa", "uk"]:
 
-    model, scaler, test, y_test, y_prob = train_model(df)
+        df = run_data_pipeline(country)
 
-    plot_roc(y_test, y_prob)
-    plot_recession_probability(test, y_prob)
+        train_model(df, country)
 
 
 if __name__ == "__main__":

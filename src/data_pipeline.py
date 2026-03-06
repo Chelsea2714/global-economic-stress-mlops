@@ -1,18 +1,19 @@
 import pandas as pd
-
-RAW_PATH = "data/raw/"
-PROCESSED_PATH = "data/processed/usa_macro_quarterly.csv"
+import os
 
 
 def clean_macro(df, value_name):
     df.columns = [col.strip() for col in df.columns]
+
     if "observation_date" in df.columns:
         df = df.rename(columns={"observation_date": "date"})
     else:
-        df = df.rename(columns={df.columns[0]: "date"})        
+        df = df.rename(columns={df.columns[0]: "date"})
+
     df["date"] = pd.to_datetime(df["date"])
     value_col = df.columns[1]
     df = df.rename(columns={value_col: value_name})
+
     return df
 
 
@@ -21,38 +22,59 @@ def to_quarterly(df):
     return df.groupby("date").mean().reset_index()
 
 
-def run_data_pipeline():
+def run_data_pipeline(country="usa"):
+
+    base_path = f"data/raw/{country}"
+
+    if country == "usa":
+        gdp_file = "GDP USA.csv"
+        inflation_file = "Inflation USA.csv"
+        unemployment_file = "Unemp USA.csv"
+        short_rate = "USA3MS.csv"
+        long_rate = "USAS10.csv"
+        recession_file = "Recession USA.csv"
+
+    elif country == "uk":
+        gdp_file = "GDP UK.csv"
+        inflation_file = "Inflation UK.csv"
+        unemployment_file = "Unemp UK.csv"
+        short_rate = "UK3MS.csv"
+        long_rate = "UKS10.csv"
+        recession_file = "Recession UK.csv"
+
+    else:
+        raise ValueError("Country not supported")
 
     # Load
-    gdp = pd.read_csv(RAW_PATH + "GDP USA.csv")
-    inflation = pd.read_csv(RAW_PATH + "Inflation USA.csv")
-    unemployment = pd.read_csv(RAW_PATH + "Unemp USA.csv")
-    dgs10 = pd.read_csv(RAW_PATH + "DGS10.csv")
-    tb3ms = pd.read_csv(RAW_PATH + "TB3MS.csv")
-    recession = pd.read_csv(RAW_PATH + "Recession USA.csv")
+    gdp = pd.read_csv(os.path.join(base_path, gdp_file))
+    inflation = pd.read_csv(os.path.join(base_path, inflation_file))
+    unemployment = pd.read_csv(os.path.join(base_path, unemployment_file))
+    short = pd.read_csv(os.path.join(base_path, short_rate))
+    long = pd.read_csv(os.path.join(base_path, long_rate))
+    recession = pd.read_csv(os.path.join(base_path, recession_file))
 
     # Clean
     gdp = clean_macro(gdp, "gdp_growth")
     inflation = clean_macro(inflation, "inflation")
     unemployment = clean_macro(unemployment, "unemployment")
-    dgs10 = clean_macro(dgs10, "dgs10")
-    tb3ms = clean_macro(tb3ms, "tb3ms")
+    short = clean_macro(short, "short_rate")
+    long = clean_macro(long, "long_rate")
     recession = clean_macro(recession, "recession")
 
     # Quarterly
     gdp = to_quarterly(gdp)
     inflation = to_quarterly(inflation)
     unemployment = to_quarterly(unemployment)
-    dgs10 = to_quarterly(dgs10)
-    tb3ms = to_quarterly(tb3ms)
+    short = to_quarterly(short)
+    long = to_quarterly(long)
     recession = to_quarterly(recession)
 
     # Yield Spread
-    yield_data = dgs10.merge(tb3ms, on="date")
-    yield_data["yield_spread"] = yield_data["dgs10"] - yield_data["tb3ms"]
+    yield_data = long.merge(short, on="date")
+    yield_data["yield_spread"] = yield_data["long_rate"] - yield_data["short_rate"]
     yield_data = yield_data[["date", "yield_spread"]]
 
-    # Merge all
+    # Merge
     df = gdp.merge(inflation, on="date") \
             .merge(unemployment, on="date") \
             .merge(yield_data, on="date") \
@@ -60,8 +82,9 @@ def run_data_pipeline():
 
     df = df.sort_values("date").dropna().reset_index(drop=True)
 
-    df.to_csv(PROCESSED_PATH, index=False)
+    output_path = f"data/processed/{country}_macro_quarterly.csv"
+    df.to_csv(output_path, index=False)
 
-    print("Data pipeline complete. Saved to:", PROCESSED_PATH)
+    print(f"Data pipeline complete for {country.upper()}. Saved to: {output_path}")
 
     return df

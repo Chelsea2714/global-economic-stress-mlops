@@ -1,43 +1,34 @@
 import pandas as pd
-from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import roc_auc_score, classification_report
-import joblib
+import pickle
 
 
-SPLIT_DATE = "2018-01-01"
-MODEL_PATH = "models/logistic_model.pkl"
+def train_model(df, country):
 
+    X = df.drop(columns=["recession", "date"])
+    y = df["recession"]
 
-def train_model(df):
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=0.3, shuffle=False
+    )
 
-    train = df[df["date"] < SPLIT_DATE]
-    test = df[df["date"] >= SPLIT_DATE]
+    model = LogisticRegression()
+    model.fit(X_train, y_train)
 
-    X_train = train.drop(["date", "recession"], axis=1)
-    y_train = train["recession"]
+    probs = model.predict_proba(X_test)[:, 1]
 
-    X_test = test.drop(["date", "recession"], axis=1)
-    y_test = test["recession"]
+    roc = roc_auc_score(y_test, probs)
+    print("ROC-AUC:", roc)
 
-    scaler = StandardScaler()
-    X_train_scaled = scaler.fit_transform(X_train)
-    X_test_scaled = scaler.transform(X_test)
+    preds = (probs >= 0.3).astype(int)
 
-    model = LogisticRegression(class_weight="balanced", max_iter=1000)
-    model.fit(X_train_scaled, y_train)
+    print(classification_report(y_test, preds))
 
-    y_prob = model.predict_proba(X_test_scaled)[:, 1]
+    model_path = f"models/logistic_model_{country}.pkl"
 
-    print("ROC-AUC:", roc_auc_score(y_test, y_prob))
+    with open(model_path, "wb") as f:
+        pickle.dump(model, f)
 
-    threshold = 0.3
-    y_pred = (y_prob > threshold).astype(int)
-
-    print(classification_report(y_test, y_pred))
-
-    joblib.dump((model, scaler), MODEL_PATH)
-
-    print("Model saved to:", MODEL_PATH)
-
-    return model, scaler, test, y_test, y_prob
+    print(f"Model saved for {country.upper()} to:", model_path)
