@@ -10,7 +10,7 @@ def main():
 
         print("\nRunning pipeline for:", country.upper())
 
-        df = run_data_pipeline("india")
+        df = run_data_pipeline(country)
 
         train_model(df, country)
 
