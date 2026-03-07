@@ -1,7 +1,6 @@
 import pandas as pd
 import os
 
-
 def clean_macro(df, value_name):
     df.columns = [col.strip() for col in df.columns]
 
@@ -21,6 +20,15 @@ def to_quarterly(df):
     df["date"] = df["date"].dt.to_period("Q").dt.start_time
     return df.groupby("date").mean().reset_index()
 
+def annual_to_quarterly(df):
+    df["date"] = pd.to_datetime(df["date"])
+    df = df.set_index("date")
+
+    # Resample to quarterly and forward fill
+    df = df.resample("Q").ffill()
+
+    df = df.reset_index()
+    return df
 
 def run_data_pipeline(country="usa"):
 
@@ -41,7 +49,15 @@ def run_data_pipeline(country="usa"):
         short_rate = "UK3MS.csv"
         long_rate = "UKS10.csv"
         recession_file = "Recession UK.csv"
-
+        
+    elif country == "india":
+        gdp_file = "GDP India.csv"
+        inflation_file = "Inflation India.csv"
+        unemployment_file = "Unemp India.csv"
+        short_rate = "IND3MS.csv"
+        long_rate = "INDS10.csv"
+        recession_file = "Recession India.csv"
+        
     else:
         raise ValueError("Country not supported")
 
@@ -57,6 +73,10 @@ def run_data_pipeline(country="usa"):
     gdp = clean_macro(gdp, "gdp_growth")
     inflation = clean_macro(inflation, "inflation")
     unemployment = clean_macro(unemployment, "unemployment")
+    if country == "india":
+        unemployment = annual_to_quarterly(unemployment)
+    else:
+        unemployment = to_quarterly(unemployment)
     short = clean_macro(short, "short_rate")
     long = clean_macro(long, "long_rate")
     recession = clean_macro(recession, "recession")
@@ -64,7 +84,6 @@ def run_data_pipeline(country="usa"):
     # Quarterly
     gdp = to_quarterly(gdp)
     inflation = to_quarterly(inflation)
-    unemployment = to_quarterly(unemployment)
     short = to_quarterly(short)
     long = to_quarterly(long)
     recession = to_quarterly(recession)
@@ -80,7 +99,7 @@ def run_data_pipeline(country="usa"):
             .merge(yield_data, on="date") \
             .merge(recession, on="date")
 
-    df = df.sort_values("date").dropna().reset_index(drop=True)
+    df = df.sort_values("date").reset_index(drop=True)
 
     output_path = f"data/processed/{country}_macro_quarterly.csv"
     df.to_csv(output_path, index=False)

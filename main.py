@@ -4,9 +4,13 @@ from src.train_model import train_model
 
 def main():
 
-    for country in ["usa", "uk"]:
+    countries = ["usa", "uk", "india", "japan", "germany"]
 
-        df = run_data_pipeline(country)
+    for country in countries:
+
+        print("\nRunning pipeline for:", country.upper())
+
+        df = run_data_pipeline("india")
 
         train_model(df, country)
 
