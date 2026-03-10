@@ -1,39 +1,106 @@
-## 🌍 Global Economic Stress ML Pipeline
+# Global Economic Stress Prediction (MLOps Project)
 
-This project builds a machine learning pipeline to detect early signals of economic recession using macroeconomic indicators.
+![Python](https://img.shields.io/badge/Python-3.10-blue)
+![Machine Learning](https://img.shields.io/badge/Machine%20Learning-Scikit--Learn-orange)
+![Data Science](https://img.shields.io/badge/Data%20Science-Macroeconomics-green)
+![Project Status](https://img.shields.io/badge/Project-Active-success)
+![License](https://img.shields.io/badge/License-MIT-lightgrey)
 
-The system processes macroeconomic data, engineers time-series features, trains a classification model, and evaluates recession prediction performance.
+This project builds a **machine learning pipeline** to estimate **recession probability across major global economies** using macroeconomic indicators.
 
-The architecture is designed to be scalable across multiple countries, enabling global economic stress monitoring.
+The system integrates:
 
-## 📊 Indicators Used
+- Data pipelines
+- Feature engineering
+- Machine learning models
+- Global recession probability forecasting
+- Visualization of economic stress indicators
 
-The model uses macroeconomic indicators commonly associated with economic cycles:
+Countries modeled:
+
+- United States
+- United Kingdom
+- India
+- Japan
+- Germany
+
+
+---
+
+# Project Objective
+
+The goal of this project is to model **global economic stress** by predicting recession probability using macroeconomic indicators commonly used by economists and central banks.
+
+Indicators used:
+
 - GDP Growth
 - Inflation
-- Unemployment Rate
-- Yield Spread (10Y bond − 3M treasury)
-- Lagged macroeconomic features
+- Unemployment
+- Yield Curve Spread (10Y − 3M)
 
-These indicators are widely used in macroeconomic recession forecasting.
+Yield curve inversion has historically been one of the **strongest predictors of recessions**.
 
-## ⚙️ Project Pipeline
+---
 
-The pipeline follows a modular ML engineering structure.
+# Machine Learning Pipeline
 
-Raw Data → Data Cleaning → Feature Engineering → Model Training → Evaluation → Saved Model
+```mermaid
+graph TD
 
-Main components:
+A[Raw Macroeconomic Data]
+B[Data Cleaning & Alignment]
+C[Feature Engineering]
+D[Model Training]
+E[Recession Probability Prediction]
+F[Global Economic Stress Indicator]
 
-| **Module**             | **Purpose**               |
-|------------------------|---------------------------|
-| data_pipeline.py       | Data cleaning + merging   |
-| feature_engineering.py | Lag feature creation      |
-| train_model.py         | Model training            |
-| evaluate.py            | Model performance metrics |
-| main.py                | Runs full pipeline        |
+A --> B
+B --> C
+C --> D
+D --> E
+E --> F
+```
 
-## 🗂 Project Structure
+This pipeline:
+
+- Loads macroeconomic data for each country
+- Cleans and aligns time series data
+- Engineers macroeconomic features
+- Trains machine learning models
+- Generates global recession probability indicators
+
+---
+
+# Project Architecture
+
+```mermaid
+graph LR
+
+A[data/raw]
+B[data_pipeline.py]
+C[data/processed]
+D[train_model.py]
+E[models]
+F[predict_global.py]
+G[global_recession_probabilities.csv]
+H[visualize.py]
+I[reports/figures]
+
+A --> B
+B --> C
+C --> D
+D --> E
+E --> F
+F --> G
+G --> H
+H --> I
+```
+
+The architecture shows how the ML pipeline processes data and produces global economic insights.
+
+---
+
+# Project Structure
 
 global-economic-stress-mlops
 │
@@ -42,96 +109,203 @@ global-economic-stress-mlops
 │   │   ├── usa
 │   │   ├── uk
 │   │   ├── india
-│   │   └── japan
+│   │   ├── japan
+│   │   └── germany
 │   │
-│   └── processed
+│   ├── processed
+│   │   ├── usa_macro_quarterly.csv
+│   │   ├── uk_macro_quarterly.csv
+│   │   ├── india_macro_quarterly.csv
+│   │   ├── japan_macro_quarterly.csv
+│   │   └── germany_macro_quarterly.csv
+│   │
+│   └── global_recession_probabilities.csv
 │
 ├── models
+│   ├── logistic_model_usa.pkl
+│   ├── logistic_model_uk.pkl
+│   ├── logistic_model_india.pkl
+│   ├── logistic_model_japan.pkl
+│   └── logistic_model_germany.pkl
+│
+├── reports
+│   └── figures
+│       └── recession_probabilities.png
 │
 ├── src
 │   ├── data_pipeline.py
-│   ├── feature_engineering.py
 │   ├── train_model.py
-│   └── evaluate.py
+│   ├── predict_global.py
+│   └── visualize.py
 │
 ├── main.py
 └── README.md
 
-## 🇺🇸🇬🇧 Phase 2: Multi-Country Integration
+---
 
-The pipeline now supports multiple countries.
+# Data Pipeline
 
-Currently supported:
-- USA
-- UK
+Each country dataset contains:
+- GDP growth
+- Inflation
+- Unemployment
+- Short-term interest rates (3M)
+- Long-term interest rates (10Y)
+- Recession indicator
 
-Each country has:
-- Separate raw datasets
-- Independent feature engineering
-- Country-specific trained models
+The pipeline performs:
+- Data cleaning
+- Date alignment
+- Quarterly conversion
+- Yield curve spread calculation
+- Dataset merging
 
-Example output:
+Processed datasets are stored in:
 
-models/
-├── logistic_model_usa.pkl
-└── logistic_model_uk.pkl
+data/processed/
 
-## 📈 Model Performance
-USA
+---
 
-ROC-AUC ≈ 0.96
+# Feature Engineering
 
-| **Metric**         | **Value** |
-|--------------------|-----------|
-| Accuracy           | ~0.82     |
-| Recall (Recession) | 1.0       |
+The model uses the following macroeconomic predictors:
 
-UK
+|  **Feature** |          **Description**         |
+|:------------:|:--------------------------------:|
+| GDP Growth   | Measures economic expansion      |
+| Inflation    | Price level change               |
+| Unemployment | Labor market weaknesses          |
+| Yield Spread | Long-term rate − short-term rate |
 
-ROC-AUC ≈ 0.97
+Yield curve inversion is widely used by economists to forecast recessions.
 
-Metric	Value
+---
 
-| **Metric**         | **Value** |
-|--------------------|-----------|
-| Accuracy           | ~0.84     |
-| Recall (Recession) | 1.0       |
+# Machine Learning Model
 
-## 🚀 Running the Pipeline
+Model used:
 
-Run the full pipeline:
+**Logistic Regression**
+
+Target variable:
+
+Recession = 1
+No Recession = 0
+
+Training uses a **time-based train/test split** to maintain chronological order and prevent data leakage.
+
+---
+
+# Model Evaluation
+
+Evaluation metrics include:
+- ROC-AUC Score
+- Precision
+- Recall
+- F1 Score
+- Classification Report
+
+Example results:
+
+| **Country** |              **ROC-AUC**              |
+|:-----------:|:-------------------------------------:|
+| USA         | 0.96                                  |
+| UK          | 0.90                                  |
+| Japan       | 0.92                                  |
+| Germany     | 0.49                                  |
+| India       | N/A (no recession events in test set) |
+
+---
+
+# Global Recession Probability Output
+
+After training models, the system generates:
+
+data/global_recession_probabilities.csv
+
+Example:
+
+| **Date** | **USA** | **UK** | **India** | **Japan** | **Germany** |
+|:--------:|:-------:|:------:|:---------:|:---------:|:-----------:|
+|  2022-Q1 |   0.12  |  0.15  |    0.09   |    0.11   |     0.13    |
+|  2022-Q2 |   0.18  |  0.21  |    0.11   |    0.16   |     0.19    |
+
+This represents a **Global Economic Stress Indicator**.
+
+---
+
+# Visualization
+
+The pipeline automatically generates recession probability charts.
+
+# Global Recession Probability
+
+The chart visualizes recession risk across major economies over time.
+
+---
+
+# How to Run the Project
+
+Clone the repository:
+
+git clone <your_repo_url>
+cd global-economic-stress-mlops
+
+Create virtual environment:
+
+python3 -m venv venv
+source venv/bin/activate
+
+Install dependencies:
+
+pip install pandas numpy scikit-learn matplotlib
+
+Run the pipeline:
 
 python3 main.py
 
-This will:
+The script will:
+- Process macroeconomic datasets
+- Train machine learning models
+- Generate recession probability forecasts
+- Create visualizations
 
-1. Run the data pipeline
-2. Generate features
-3. Train recession models
-4. Evaluate performance
-5. Save models
+---
 
-## 🧠 Phase Roadmap
+# Tech Stack
 
-|                  **Phase**                  | **Status** |
-|:-------------------------------------------:|:----------:|
-| Phase 1 — USA recession model               | ✅ Complete |
-| Phase 2 — Multi-country pipeline (USA + UK) | ✅ Complete |
-| Phase 3 — Add India, Japan, Germany         | 🔜 Next     |
-| Phase 4 — Global recession risk dashboard   | Planned    |
-| Phase 5 — Real-time data pipeline           | Planned    |
+Languages and tools used:
+- Python
+- Pandas
+- NumPy
+- Scikit-learn
+- Matplotlib
 
-## 📊 Data Source
+Concepts applied:
+- Macroeconomic indicator modeling
+- Time-series feature engineering
+- Logistic regression classification
+- Machine learning evaluation metrics
+- Data pipeline automation
 
-Macroeconomic data sourced from:
+---
 
-Federal Reserve Economic Data (FRED)
+# Future Improvements
 
-https://fred.stlouisfed.org/
+Potential enhancements include:
+- Automated macroeconomic data ingestion using APIs
+- Additional indicators (credit spreads, PMI, market volatility)
+- Gradient boosting models
+- Global economic dashboard
+- Automated ML pipelines (MLOps)
+- Model monitoring and retraining
 
-## 🎯 Goal
+---
 
-The long-term goal is to build a global economic stress monitoring system that can:
-- detect early recession signals
-- compare economic stress across countries
-- support policy and investment insights
+# Author
+
+Chelsea Patel
+
+Engineering student focused on **Data Science, Machine Learning, and Economic Analytics**.
+
+---
