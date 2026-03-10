@@ -204,13 +204,14 @@ Evaluation metrics include:
 
 Example results:
 
-| **Country** |              **ROC-AUC**              |
-|:-----------:|:-------------------------------------:|
-| USA         | 0.96                                  |
-| UK          | 0.90                                  |
-| Japan       | 0.92                                  |
-| Germany     | 0.49                                  |
-| India       | N/A (no recession events in test set) |
+| **Country** |            **Logistic ROC**           | **Random Forest ROC** |
+|:-----------:|:-------------------------------------:|:---------------------:|
+| USA         | 0.96                                  | 0.96                  |
+| UK          | 0.90                                  | 0.83                  |
+| India       | N/A (no recession events in test set) | N/A                   |
+| Japan       | 0.92                                  | 0.62                  |
+| Germany     | 0.49                                  | 0.33                  |
+
 
 ---
 
@@ -300,6 +301,14 @@ Concepts applied:
 - Data pipeline automation
 
 ---
+
+# Exploratory Data Analysis
+
+Exploratory data analysis was performed to understand macroeconomic indicator trends and their relationship with recession periods.
+
+See the notebook:
+
+'notebooks/exploratory_analysis.ipynb'
 
 # Future Improvements
 
