@@ -36,7 +36,9 @@ def train_model(df, country):
 
     print(classification_report(y_test, preds))
 
-    model_path = f"models/logistic_model_{country}.pkl"
+    from src.config import MODEL_PATH
+
+    model_path = f"{MODEL_PATH}logistic_model_{country}.pkl"
 
     with open(model_path, "wb") as f:
         pickle.dump(model, f)

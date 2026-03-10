@@ -34,7 +34,9 @@ def annual_to_quarterly(df):
 
 def run_data_pipeline(country="usa"):
 
-    base_path = f"data/raw/{country}"
+    from src.config import RAW_DATA_PATH
+
+    base_path = f"{RAW_DATA_PATH}{country}"
 
     if country == "usa":
         gdp_file = "GDP USA.csv"

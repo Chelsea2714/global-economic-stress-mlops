@@ -190,6 +190,7 @@ Model used:
 Target variable:
 
 Recession = 1
+
 No Recession = 0
 
 Training uses a **time-based train/test split** to maintain chronological order and prevent data leakage.

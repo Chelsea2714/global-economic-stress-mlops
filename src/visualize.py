@@ -18,6 +18,8 @@ def plot_recession_probabilities():
 
     plt.tight_layout()
 
-    plt.savefig("reports/figures/recession_probabilities.png")
+    from src.config import REPORT_PATH
+
+    plt.savefig(f"{REPORT_PATH}recession_probabilities.png")
 
     print("Figure saved to reports/figures/")
