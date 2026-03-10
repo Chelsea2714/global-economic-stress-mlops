@@ -42,6 +42,17 @@ Yield curve inversion has historically been one of the **strongest predictors of
 
 ---
 
+# Data Sources
+
+Macroeconomic datasets were collected from:
+- FRED (Federal Reserve Economic Data)
+- OCED economic datasets
+- National statistical agencies
+
+These datasets include GDP growth, inflation, unemployment rates, and interest rate data used for macroeconomic modeling.
+
+---
+
 # Machine Learning Pipeline
 
 ```mermaid
