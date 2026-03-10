@@ -1,6 +1,7 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import roc_auc_score, classification_report
 import pickle
 
@@ -20,6 +21,10 @@ def train_model(df, country):
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, test_size=0.3, shuffle=False
     )
+
+    # -------------------------
+    # Logistic Regression Model
+    # -------------------------
 
     model = LogisticRegression(max_iter=1000)
     model.fit(X_train, y_train)
@@ -43,4 +48,39 @@ def train_model(df, country):
     with open(model_path, "wb") as f:
         pickle.dump(model, f)
 
-    print(f"Model saved for {country.upper()} to:", model_path)
+    print(f"Logistic model saved for {country.upper()} to:", model_path)
+
+    # -------------------------
+    # Random Forest Model
+    # -------------------------
+
+    rf_model = RandomForestClassifier(
+        n_estimators=200,
+        random_state=42
+    )
+    
+    rf_model.fit(X_train, y_train)
+
+    from src.visualize import plot_feature_importance
+
+    plot_feature_importance(rf_model, X_train, country)
+
+    rf_probs = rf_model.predict_proba(X_test)[:, 1]
+
+    if len(y_test.unique()) > 1:
+        rf_roc = roc_auc_score(y_test, rf_probs)
+        print("Random Forest ROC-AUC:", rf_roc)
+    else:
+        print("Random Forest ROC-AUC: not defined")
+
+    rf_preds = (rf_probs >= 0.3).astype(int)
+    
+    print("Random Forest Results")
+    print(classification_report(y_test, rf_preds))
+
+    rf_model_path = f"{MODEL_PATH}rf_model_{country}.pkl"
+
+    with open(rf_model_path, "wb") as f:
+        pickle.dump(rf_model, f)
+
+    print(f"Random Forest model saved for {country.upper()} to:", rf_model_path)

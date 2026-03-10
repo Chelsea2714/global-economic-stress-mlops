@@ -181,19 +181,15 @@ Yield curve inversion is widely used by economists to forecast recessions.
 
 ---
 
-# Machine Learning Model
+# Machine Learning Models
 
-Model used:
+Two machine learning models are used to predict recession probability:
+- Logistic Regression
+- Random Forest Classifier
 
-**Logistic Regression**
+Logistic Regression provides interpretable baseline results, while Random Forest captures non-linear relationships between macroeconomic indicators.
 
-Target variable:
-
-Recession = 1
-
-No Recession = 0
-
-Training uses a **time-based train/test split** to maintain chronological order and prevent data leakage.
+Both models are trained and evaluated for each country.
 
 ---
 
@@ -239,6 +235,16 @@ This represents a **Global Economic Stress Indicator**.
 
 The pipeline automatically generates recession probability charts.
 
+# Feature Importance
+
+Random Forest models are used to estimate the importance of macroeconomic indicators in predicting recessions.
+
+Example feature importance output:
+
+![Feature Importance](reports/figures/feature_importance_usa.png)
+
+This analysis highlights which macroeconomic variables contribute most strongly to recession prediction.
+
 # Global Recession Probability
 
 The chart visualizes recession risk across major economies over time.
@@ -282,11 +288,15 @@ Languages and tools used:
 - Scikit-learn
 - Matplotlib
 
+Machine Learning Models:
+- Logistic Regression
+- Random Forest 
+
 Concepts applied:
 - Macroeconomic indicator modeling
 - Time-series feature engineering
-- Logistic regression classification
-- Machine learning evaluation metrics
+- Recession prediction
+- Feature importance analysis
 - Data pipeline automation
 
 ---
