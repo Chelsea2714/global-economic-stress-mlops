@@ -1,55 +1,141 @@
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
+import plotly.express as px
 
-st.title("Global Economic Stress Dashboard")
+st.sidebar.title("Dashboard Controls")
 
-st.write(
-"""
-This dashboard visualizes recession probabilities across major global economies
-predicted using macroeconomic indicators such as GDP growth, inflation,
-unemployment, and yield curve spread.
-"""
+country = st.sidebar.selectbox(
+    "Select Country",
+    countries
+    format_func=lambda x: x.upper()
 )
 
-# Load probability data
-df = pd.read_csv("data/global_recession_probabilities.csv")
+# --------------------------------------------------
+# Page Configuration
+# --------------------------------------------------
+st.set_page_config(
+page_title="Global Economic Stress Dashboard",
+page_icon="📊",
+layout="wide"
+)
 
-# Convert date column
+# --------------------------------------------------
+# Title & Description
+# --------------------------------------------------
+st.title("🌍 Global Economic Stress Prediction Dashboard")
+
+st.info("Interactive dashboard for monitoring global recession risk using macroeconomic indicators.")
+
+st.markdown("""
+This dashboard predicts **economic stress / recession probability**
+across major economies using machine learning models trained on
+macroeconomic indicators.
+""")
+
+# --------------------------------------------------
+# Load Data
+# --------------------------------------------------
+@st.cache_data
+def load_data():
+df = pd.read_csv("data/global_recession_probabilities.csv")
 df["date"] = pd.to_datetime(df["date"])
+return df
+
+df = load_data()
 
 countries = ["usa", "uk", "india", "japan", "germany"]
 
-country = st.selectbox("Select Country", countries)
+# --------------------------------------------------
+# KPI Metrics
+# --------------------------------------------------
+col1, col2, col3 = st.columns(3)
 
-st.subheader(f"Recession Probability: {country.upper()}")
+col1.metric("Countries Modelled", len(countries))
+col2.metric("Total Data Points", len(df))
+col3.metric("Model Type", "Logistic Regression")
 
-fig, ax = plt.subplots()
+st.markdown("---")
 
-ax.plot(df["date"], df[country])
-ax.set_ylabel("Recession Probability")
-ax.set_xlabel("Date")
+st.subheader("Global Economic Stress Indicator")
 
-st.pyplot(fig)
+latest = df.iloc[-1]
 
-st.subheader("Latest Probabilities")
+global_risk = latest[countries].mean()
+
+if global_risk > 0.6:
+    st.error(f"⚠️ Global Stress Level: HIGH ({global_risk:.2f})")
+
+elif global_risk > 0.4:
+    st.warning(f"⚠️ Global Stress Level: MODERATE ({global_risk:.2f})")
+
+else:
+    st.success(f"✅ Global Stress Level: LOW ({global_risk:.2f})")
+
+# --------------------------------------------------
+# Country Selector
+# --------------------------------------------------
+country = st.selectbox(
+"Select Country",
+countries,
+format_func=lambda x: x.upper()
+)
+
+# --------------------------------------------------
+# Country Recession Probability
+# --------------------------------------------------
+st.subheader(f"Recession Probability Trend: {country.upper()}")
+
+fig = px.line(
+    df,
+    x="date",
+    y=country,
+    title=f"{country.upper()} Economic Stress Probability",
+)
+
+st.plotly_chart(fig, use_container_width=True)
+
+# --------------------------------------------------
+# Latest Probabilities Table
+# --------------------------------------------------
+st.subheader("Latest Recession Probabilities")
 
 latest = df.iloc[-1]
 
 latest_df = pd.DataFrame({
-    "Country": countries,
-    "Probability": [latest[c] for c in countries]
+"Country": [c.upper() for c in countries],
+"Probability": [latest[c] for c in countries]
 })
 
-st.dataframe(latest_df)
+st.dataframe(latest_df, use_container_width=True)
 
+# --------------------------------------------------
+# Global Comparison Chart
+# --------------------------------------------------
 st.subheader("Global Recession Probability Comparison")
 
-fig2, ax2 = plt.subplots()
+df_long = df.melt(
+    id_vars="date",
+    value_vars=countries,
+    var_name="Country",
+    value_name="Probability"
+)
 
-for c in countries:
-    ax2.plot(df["date"], df[c], label=c.upper())
+fig2 = px.line(
+    df_long,
+    x="date",
+    y="Probability",
+    color="Country",
+    title="Global Recession Probability Comparison"
+)
 
-ax2.legend()
+st.plotly_chart(fig2, use_container_width=True)
 
-st.pyplot(fig2)
+# --------------------------------------------------
+# Footer
+# --------------------------------------------------
+st.markdown("---")
+st.caption(
+"Global Economic Stress MLOps Pipeline | "
+"Machine Learning + Macroeconomic Data + Interactive Dashboard"
+)

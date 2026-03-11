@@ -331,9 +331,13 @@ Run locally:
 
 streamlit dashboard.py
 
+# Live Dashboard
+
+
+
 # Dashboard Preview
 
-![Dashboard](reports/figures/dashboard.png)
+![Dashboard](reports/figures/dashboard_preview.png)
 
 The dashboard allows users to:
 
