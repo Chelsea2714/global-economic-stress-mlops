@@ -7,7 +7,7 @@ st.sidebar.title("Dashboard Controls")
 
 country = st.sidebar.selectbox(
     "Select Country",
-    countries
+    countries,
     format_func=lambda x: x.upper()
 )
 
