@@ -15,9 +15,9 @@ country = st.sidebar.selectbox(
 # Page Configuration
 # --------------------------------------------------
 st.set_page_config(
-page_title="Global Economic Stress Dashboard",
-page_icon="📊",
-layout="wide"
+    page_title="Global Economic Stress Dashboard",
+    page_icon="📊",
+    layout="wide"
 )
 
 # --------------------------------------------------
@@ -38,9 +38,9 @@ macroeconomic indicators.
 # --------------------------------------------------
 @st.cache_data
 def load_data():
-df = pd.read_csv("data/global_recession_probabilities.csv")
-df["date"] = pd.to_datetime(df["date"])
-return df
+    df = pd.read_csv("data/global_recession_probabilities.csv")
+    df["date"] = pd.to_datetime(df["date"])
+    return df
 
 df = load_data()
 
@@ -76,9 +76,9 @@ else:
 # Country Selector
 # --------------------------------------------------
 country = st.selectbox(
-"Select Country",
-countries,
-format_func=lambda x: x.upper()
+    "Select Country",
+    countries,
+    format_func=lambda x: x.upper()
 )
 
 # --------------------------------------------------
@@ -103,8 +103,8 @@ st.subheader("Latest Recession Probabilities")
 latest = df.iloc[-1]
 
 latest_df = pd.DataFrame({
-"Country": [c.upper() for c in countries],
-"Probability": [latest[c] for c in countries]
+    "Country": [c.upper() for c in countries],
+    "Probability": [latest[c] for c in countries]
 })
 
 st.dataframe(latest_df, use_container_width=True)
@@ -136,6 +136,6 @@ st.plotly_chart(fig2, use_container_width=True)
 # --------------------------------------------------
 st.markdown("---")
 st.caption(
-"Global Economic Stress MLOps Pipeline | "
-"Machine Learning + Macroeconomic Data + Interactive Dashboard"
+    "Global Economic Stress MLOps Pipeline | "
+    "Machine Learning + Macroeconomic Data + Interactive Dashboard"
 )
