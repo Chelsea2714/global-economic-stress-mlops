@@ -321,6 +321,28 @@ See the notebook:
 
 'notebooks/exploratory_analysis.ipynb'
 
+---
+
+## Interactive Dashboard
+
+An interactive dashboard is included to explore recession probabilities.
+
+Run locally:
+
+streamlit dashboard.py
+
+# Dashboard Preview
+
+![Dashboard](reports/figures/dashboard.png)
+
+The dashboard allows users to:
+
+- Visualize recession probability trends
+- Compare economic stress across countries
+- Explore model outputs interactively
+
+---
+
 # Future Improvements
 
 Potential enhancements include:
