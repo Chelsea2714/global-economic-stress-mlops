@@ -29,7 +29,7 @@ macroeconomic indicators and machine learning predictions.
 # --------------------------------------------------
 @st.cache_data
 def load_data():
-    df = pd.read_csv("data/macro_data.csv")
+    df = pd.read_csv("data/global_recession_probabilities.csv")
     df["date"] = pd.to_datetime(df["date"])
     return df
 
