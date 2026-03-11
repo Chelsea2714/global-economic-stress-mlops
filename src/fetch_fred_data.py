@@ -28,4 +28,7 @@ df.columns = [
 
 df = df.dropna()
 
-df.to_csv("data/macro_data.csv")
+df = df.reset_index()
+df.rename(columns={"index": "date"}, inplace=True)
+
+df.to_csv("data/macro_data.csv", index=False)
