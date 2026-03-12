@@ -346,7 +346,6 @@ Potential enhancements include:
 - Automated macroeconomic data ingestion using APIs
 - Additional indicators (credit spreads, PMI, market volatility)
 - Gradient boosting models
-- Global economic dashboard
 - Automated ML pipelines (MLOps)
 - Model monitoring and retraining
 
