@@ -113,44 +113,37 @@ The architecture shows how the ML pipeline processes data and produces global ec
 
 # Project Structure
 
+```
 global-economic-stress-mlops
-│
 ├── data
-│   ├── raw
-│   │   ├── usa
-│   │   ├── uk
-│   │   ├── india
-│   │   ├── japan
-│   │   └── germany
-│   │
-│   ├── processed
-│   │   ├── usa_macro_quarterly.csv
-│   │   ├── uk_macro_quarterly.csv
-│   │   ├── india_macro_quarterly.csv
-│   │   ├── japan_macro_quarterly.csv
-│   │   └── germany_macro_quarterly.csv
-│   │
+│   ├── raw/                # Country-level raw macroeconomic data
+│   ├── processed/          # Cleaned quarterly datasets
+│   ├── macro_data.csv
 │   └── global_recession_probabilities.csv
 │
-├── models
-│   ├── logistic_model_usa.pkl
-│   ├── logistic_model_uk.pkl
-│   ├── logistic_model_india.pkl
-│   ├── logistic_model_japan.pkl
-│   └── logistic_model_germany.pkl
+├── models                  # Trained ML models (Logistic + Random Forest)
+│
+├── notebooks
+│   └── exploratory_analysis.ipynb
 │
 ├── reports
-│   └── figures
-│       └── recession_probabilities.png
+│   └── figures             # Dashboard previews & feature importance plots
 │
 ├── src
+│   ├── config.py
 │   ├── data_pipeline.py
+│   ├── feature_engineering.py
 │   ├── train_model.py
 │   ├── predict_global.py
+│   ├── evaluate.py
 │   └── visualize.py
 │
-├── main.py
+├── dashboard.py            # Streamlit dashboard
+├── main.py                 # Main pipeline runner
+├── requirements.txt
+├── LICENSE
 └── README.md
+```
 
 ---
 
